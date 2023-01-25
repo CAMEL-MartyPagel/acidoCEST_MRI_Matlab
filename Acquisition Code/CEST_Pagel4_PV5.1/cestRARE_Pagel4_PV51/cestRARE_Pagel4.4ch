@@ -1,0 +1,243 @@
+;****************************************************************
+;
+; Copyright (c) 2002
+; Bruker BioSpin MRI GmbH
+; D-76275 Ettlingen, Germany
+;
+; All Rights Reserved
+;
+; a RARE imaging experiment
+;
+;****************************************************************
+;
+; cestRARE_Pagel4
+;
+; This RARE MRI pulse program from Bruker ParaVision 5.1 was modified by Marty Pagel
+; and colleagues (especially Ed Randtke and Kyle Jones) to create a
+; CEST RARE MRI acquisition method.  Please contact Marty at
+; mdpagel@mdanderson.org or martypagel@gmail.com for questions or sugestions.
+;
+; This pulse program is provided for free to the MRI research community.
+; Although this pulse program has worked on all Bruker MRI scanners
+; with ParaVision 5.1 that have been tested to date,
+; there is no guarantee that this pulse program
+; will work on all Bruker MRI scanners.
+; Also, while we are collegial researchers, we may not be able to provide
+; assistance due to limited time and other priorities.
+;
+; This version was developed on July 29, 2017 and is known as cestRARE_Pagel4
+;
+; d0 - TR padding
+; d1, d2  - TE padding
+; d3 = PVM_GradDelayTime
+; d4 = PVM_RampTime
+; d8 = CONFIG_amplifier_enable
+; d5 = delay before CEST saturation period, PresatDelay, added by Marty Pagel
+; l3=NumSatFrqTtoal  ;Added on by Marty Pagel
+
+#include <MRI.include>
+preset off
+
+define list<frequency> o4list = {$SatFrqList} ;Added by Marty Pagel
+define loopcounter NumSatPulses = {$NumSatPulses}     ; Added by Marty Pagel
+; this variable is the minimum number of CEST saturation pulses
+; Note that the number of CEST saturation pulses can be more than the minimum if respiration gating is used.
+; One or more extra CEST saturation pulses are applied after the minimum number, until the respiration trigger is active.
+
+define delay denab
+"denab = d4 + d3 - de"
+
+define delay d4d2m41u
+"d4d2m41u = d4 + d2 - 41u"
+
+define delay d3m5u
+"d3m5u = d3 - 5u"
+
+define delay d1md3
+"d1md3 = d1 - d3"
+
+define loopcounter lc1
+"lc1 = ds"
+
+#include <PrepModulesHead.mod>
+
+INIT_DEVICES
+
+subr FlowSatInit()
+
+if( ACQ_dim >=2 )
+{
+  lgrad r2d<2d> = ACQ_size[1]
+  zgrad r2d
+}
+if( ACQ_dim >= 3)
+{
+  lgrad r3d<3d> = ACQ_size[2]
+}
+else
+{
+  lgrad r3d<3d> = 1
+}
+  zgrad r3d
+
+lgrad slice = NSLICES
+zslice
+zgrad r2d
+
+;pre-setting the r2d counter for the dummy scans:
+decr,   dgrad r2d
+        lo to decr times l1	;DS*ACQ_rare_factor
+
+start,  1u	sgrad r2d
+acc,    9u
+
+;--- Start of cestRARE Modification by Marty Pagel ---
+; Most of the remainder of this file is the Brruker RARE acquisition.  There are only
+; a few additional modifications at the end of the file for cestRARE.
+
+; The cestRARE_Pagel4_Trigger.mod file performs the entire saturation period
+; even if respiration gating is NOT turned on.
+; Therefore, our edit esentially just comments out the standard respiration
+; trigger files, and adds our trigger file.
+
+; The next line is commented out
+;#include <TriggerPerPhaseStep.mod>
+
+
+slice,  10u fq8b:f1 fq8b:f2 fq8b:f3 fq8b:f4
+
+; Our cestRARE acquisition method only acquires 1 slice, 
+; so the next line is commented out to avoid unexpected delays per slice
+;#include <TriggerPerSlice.mod>
+
+; And then we add our file.
+#include<cestRARE_Pagel4_Trigger.mod>
+
+;--- End of cestRARE Modification by Marty Pagel ---
+
+subr SliceSelIr()
+
+;----------------------------------preparation modules -------------
+subr FlowSat()
+subr SatSlices() 
+subr MagTrans()
+subr FatSup()
+
+        d4	grad{(0)|(0)|(t10)}
+        d9      
+;----------------------------------slice selection------------------	
+	d4 	grad{(0)|(0)|(t0)}
+	d3m5u	fq1:f1 fq1:f2 fq1:f3 fq1:f4
+        5u reset:f1 reset:f2 reset:f3 reset:f4
+        d8	gatepulse 1
+	p0:sp0 	ph0
+	d4 	groff
+	10u
+;----------------------------------slice rephase--------------------
+	d4 	grad{(t4)|(0)|(t1)}
+	d11 	
+	d4 	groff
+	d1      
+;---------------------------------- refocusing group ---------------------
+echo1,  0u	rgrad r2d		    
+echo,	d4      grad{(0)|(0)|(t3)}
+        d5
+        d4      grad{(0)|(0)|(t2)}  gatepulse 1
+        d3	
+        p1:sp1 	ph1
+        d3
+        d4      grad{(0)|(0)|(t3)}
+        d5
+        d4      groff         
+;----------------------------------- refocusing group - end -----------
+	d2
+;----------------------------------read on + phase encoding----
+	d4    grad{(t5)|r2d(t6)|r3d(t7)} ; 2nd and 3rd dims
+	d6
+	denab   grad{(t5)|(0)|(0)} 
+        ADC_INIT_B_4ch(ph0, ph1)  
+	aqq	ADC_START_4ch
+	d3	
+;----------------------------------read on + phase encoding----
+	d4	grad{(t5)|r2d(t8)|r3d(t9)} ; 2nd and 3rd dims
+	d6      
+	d4d2m41u groff
+	1u	 igrad r2d
+	ADC_END_4ch
+lo to echo times NECHOES/PVM_NEchoImages 
+lo to echo1 times PVM_NEchoImages
+
+if( PVM_FlipBackOnOff == On)
+{
+
+	d4      grad{(0)|(0)|(t3)}
+	d5
+        d4      grad{(0)|(0)|(t2)}  gatepulse 1
+        d3	
+        p1:sp1 	ph1
+        d3
+        d4      grad{(0)|(0)|(t3)}
+        d5
+        d4      groff         
+	d1md3  
+	d4 	grad{(t4)|(0)|(t1)}
+	d11 	
+	d4 	groff
+	10u
+	d4 	grad{(0)|(0)|(t0)}  gatepulse 1
+	d3	
+	p0:sp0 	ph3
+	d4 	groff
+
+}	
+
+;----------------------------------slice loop-----------------------
+	islice
+	d0
+subr FlowSatInc()
+	lo to slice times NSLICES
+	d10
+    zslice  
+	2.5u	ipp0
+	2.5u	ipp3
+;----------------------------------averaging loop-------------------
+	lo to acc times NA
+	2.5u	rpp0
+	2.5u	rpp3
+;----------------------------------2d loop--------------------------
+if( ACQ_dim >= 2 )
+{
+	"lc1 = lc1 - 1"		; this makes
+	if "lc1>=0" goto start	; dummy scans 
+
+	lo to start times l2	;ACQ_size[1]/ACQ_rare_factor
+}
+;----------------------------------3d loop--------------------------
+if( ACQ_dim >= 3 )
+{
+	igrad r3d
+	lo to start times ACQ_size[2]
+}
+        5u
+        lo to start times NAE
+        5u
+#include <Evolution.mod>
+        5u
+
+;--- Start of cestRARE Modification by Marty Pagel ---
+; the next line increments the o4list so that the next sturation frequency
+; is used for the next image acquisition.
+
+        o4list.inc              ;  Next CEST saturation frequency, assigned to the CESTSatFrq near the start of the program
+
+;--- End of cestRARE Modification by Marty Pagel ---
+
+        lo to start times NR
+SETUP_GOTO(start)
+
+exit
+
+ph0 = 0 2
+ph1 = 1
+ph3 = 2 0
+

@@ -1,0 +1,377 @@
+;**************************************************************** ;
+; Copyright (c) 2000 - 2003
+; Bruker BioSpin MRI GmbH
+; D-76275 Ettlingen, Germany
+;
+; All Rights Reserved
+;
+;*****************************************
+; 23.04.2002  unified, freq_lists for 180,
+; slice loop after segm loop
+; with add. delay (d6) before  next inv. pulse  
+;*****************************************
+;
+; cestFISP_Pagel4
+;
+; This FISP MRI pulse program from Bruker ParaVision 5.1 was modified by Marty Pagel 
+; and colleagues (especially Ed Randtke and Kyle Jones) to create a
+; CEST FISP MRI acquisition method.  Please contact Marty at 
+; mdpagel@mdanderson.org or martypagel@gmail.com for questions or sugestions.
+;
+; This pulse program is provided for free to the MRI research community.
+; Although this pulse program has worked on all Bruker MRI scanners 
+; with ParaVision 5.1 that have been tested to date,
+; there is no guarantee that this pulse program 
+; will work on all Bruker MRI scanners.
+; Also, while we are collegial researchers, we may not be able to provide
+; assistance due to limited time and other priorities.
+;
+; This version was developed on June 22, 2018 (20180622)
+;
+; d0 - TR padding
+; d1 - T1 padding
+; d2 - T2 padding
+; d3 = PVM_GradDelayTime
+; d4 = PVM_RampTime
+; d6 = used for Inv_Rep_time 
+; d8 CONFIG_amplifier_enable
+; d20 = FID_delay
+; d21 = ECHO_delay
+; l3=NumSatFrqTotal ;Added by Marty Pagel
+
+define list<frequency> o1list = {$ACQ_O1_list}
+define list<frequency> o2list = {$ACQ_O2_list}
+define list<frequency> o3list = {$ACQ_O3_list}
+define list<frequency> o4list = {$SatFrqList} ;Added by MArty Pagel, the o4list is the list of CEST saturation frequencies
+define list<frequency> onres  = {0.0}
+define list<power> PwL = { $PVM_ppgPowerList1 }
+define loopcounter NumSatPulses = {$NumSatPulses}     ; Added by Marty Pagel
+; this variable is the minimum number of CEST saturation pulses
+; Note that the number of CEST saturation pulses can be more than the minimum if respiration gating is used.
+; One or more extra CEST saturation pulses are applied after the minimum number, until the respiration trigger is active.
+
+;new convention:
+;d4 = PVM_RiseTime
+"d14 = d4/2"
+
+define delay dur20
+"dur20 = d20 - de"
+
+define delay dur1
+"dur1 =d1 - 10u"
+
+define delay d1x
+"d1x = d1 - 25u"
+
+define delay d9x
+"d9x = d9 - 20u"
+
+#include <PrepModulesHead.mod>
+#include <MRI.include>
+preset off
+
+INIT_DEVICES
+
+if( ACQ_dim >=2 )
+{
+  lgrad r2d<2d> = ACQ_size[1]
+}
+if( ACQ_dim >= 3)
+{
+  lgrad r3d<3d> = l5
+}
+else
+{
+  lgrad r3d<3d> = 1
+}
+
+lgrad slice = NSLICES
+
+
+start,  d4    
+segm,   sgrad r2d
+
+
+
+;--- Start of cestFISP Modification by Marty Pagel ---
+; Most of the remainder of this file is the Brruker FISP acquisition.  There are only
+; a few additional modifications at the end of the file for cestFISP.
+
+; The cestFISP_Pagel4_Trigger.mod file performs the entire saturation period
+; even if respiration gating is NOT turned on.
+; Therefore, our edit esentially just comments out the standard respiration
+; trigger files, and adds our trigger file.
+
+; The next line is commented out
+;#include <TriggerPerPhaseStep.mod>
+
+slice,  10u   fq8b:f1
+        5u PwL.res
+        10u   
+
+; Our cestFISP acquisition method only acquires 1 slice, 
+; so the next line is commented out to avoid unexpected delays per slice
+;#include <TriggerPerSlice.mod>
+
+; And then we add our file.
+#include<cestFISP_Pagel4_Trigger.mod>
+
+;--- End of cestFISP Modification by Marty Pagel ---
+
+
+
+
+;--------------------------Inversion----------------
+if( PVM_ppgFlag2 == 1 )
+;if(FISP_inversion_enable == Yes)
+{
+inv,     d4   onres:f1                  ;on resonance 
+  	 d8   gatepulse 1
+         p4:sp4 ph4                   ;inversion pulse
+         d16                          ;inversion time  
+}
+;-----------------------end of Inversion-----------
+
+;--- spoiler before each slice, and setting the slice grad for the alpha/2
+	d10   grad{(0)|(0)|(t0)} o1list:f1
+;---alpha/2 -----
+if(ssfp_preparation == Alpha_2)
+{	
+alpha2, 10u
+	p0:sp3 	 ph3
+	10u
+        d4    grad{(0)|(0)|(t11)}
+        10u   o3list:f1
+        d9x
+        10u   o1list:f1       
+        d4    grad{(0)|(0)|(t0)}   gatepulse 1	
+}		     
+;---end of alpha/2 -----
+;-- initial dummy echoes -----------------------
+if(L[6] != 0)
+{
+init1,  10u
+	p0:sp0 	 ph0
+	10u			     
+        5u    grad{(t2)|(0)|(t1)}  
+        10u   o2list:f1       ;phase advance - start
+	d1x                   ;
+	10u   o1list:f1       ;phase advance - end	
+	d4    grad{(t5)|(0)|(0)} 
+        d20   ph1 
+        aqq     
+        d21  
+if(PVM_ppgMode1 == 0)
+{    
+        d1    grad{(t9)|(0)|(t10)}  o2list.inc
+}
+else
+{
+        d1    grad{(t9)|(0)|(t10)}
+}
+        d4    grad{(0)|(0)|(t0)}  gatepulse 1
+        lo to init1 times l6
+}
+
+;--- end of alpha/2 and dummy echoes ------------
+;--- Starter Sequence  --------------------------
+if(ssfp_preparation == Starter_Sequence)
+{
+;--  Preparation for Mz   -----------------------	
+alpha,  10u
+	p0:sp5 	 ph5
+	10u			     
+        5u    grad{(0)|(0)|(t1)}  
+ 
+        10u     o2list:f1       ;phase advance - start
+	d1x                     ; 
+	10u	o1list:f1       ;phase advance - end
+	d4    grad{(0)|(0)|(0)} 
+        d20   ph1 
+        aqq     
+        d21 
+        d1    grad{(0)|(0)|(t10)}
+        d4    grad{(0)|(0)|(t0)}  gatepulse 1
+        10u
+	p0:sp6 	 ph6
+	10u		     
+        d4    grad{(40)|(30)|(35)}
+        4m
+        d4    grad{(0)|(0)|(t0)} PwL:f1  gatepulse 1
+
+;--  Preparation for Mxy   -----------------------
+if(L[7] != 0)
+{
+init2,  10u
+	p0:sp1(currentpower) 	 ph0
+	10u			     
+        5u    grad{(t2)|(0)|(t1)}  
+ 
+        10u      o2list:f1      ;phase advance - start
+	d1x                     ; 
+	10u	 o1list:f1      ;phase advance - end
+	d4    grad{(t5)|(0)|(0)} 
+        d20   ph1 
+        aqq     
+        d21   PwL.inc
+if(PVM_ppgMode1 == 0)
+{    
+        d1    grad{(t9)|(0)|(t10)}  o2list.inc
+}
+else
+{
+        d1    grad{(t9)|(0)|(t10)}
+}
+        d4    grad{(0)|(0)|(t0)} PwL:f1  gatepulse 1
+        lo to init2 times l7
+}
+}
+; ---- End of Starter Sequence ---------------	
+
+;----------------- movie loop-----------------
+movie,  rgrad r2d
+;------------------- ssfp loops --------------
+ssfp,   10u
+	p0:sp0  ph0                   	
+	10u					;compensation
+ if(PVM_ppgMode1 == 0)
+{       
+        d1      grad{(t2)|r2d(t3)|(t1)+r3d(t4)}
+}
+else
+{
+        5u      grad{(t2)|r2d(t3)|(t1)+r3d(t4)}
+
+        10u     o2list:f1       ;phase advance - start
+	d1x                     ; 
+	10u	o1list:f1       ;phase advance - end
+}
+ 
+;-------------------------frequency encoding---------------
+	d4 	grad{(t5)|(0)|(0)} o1list:f1
+	dur20
+        ADC_INIT_B(NOPH,ph1)
+	aqq	ADC_START
+	d21	
+;------------------------spoiler + phase rewinding -------
+ if(PVM_ppgMode1 == 0)
+{
+        10u ADC_END
+        5u     grad{(t9)|r2d(t7)|(t10)+r3d(t8)}
+        10u     o2list:f1       ;phase advance - start
+	d1x         
+        5u	o1list:f1       
+	5u      o2list.inc  
+}
+else
+{
+        dur1   	grad{(t9)|r2d(t7)|(t10)+r3d(t8)}  
+	10u ADC_END
+}
+	d4      grad{(0)|(0)|(t0)}    gatepulse 1 
+
+;------------------------2d loops--------------------------
+	igrad r2d
+if (l4 != 1)
+{
+	lo to ssfp times l4 ;   l4 = ACQ_phase_factor
+}
+;------------------end of ssfp loops ----------------------
+
+
+;----------------------ssdum loops--------------------------
+
+if( PVM_ppgFlag1 == 1 )
+;if(Segment_separation > 0)
+{
+        dgrad r2d
+
+ssdum,  10u
+        p0:sp0  ph0
+        10u
+        5u      grad{(t2)|r2d(t3)|(t1)+r3d(t4)}	
+        10u     o2list:f1       ;phase advance - start
+	d1x
+	10u	o1list:f1       ;phase advance - end
+        d4      grad{(t5)|(0)|(0)} 
+        d20     ph1
+        aqq     
+        d21   
+if(PVM_ppgMode1 == 0)
+{
+        d1      grad{(t9)|r2d(t7)|(t10)+r3d(t8)}  o2list.inc
+ }
+else
+{
+        d1      grad{(t9)|r2d(t7)|(t10)+r3d(t8)}
+} 
+        d4      grad{(0)|(0)|(t0)}  gatepulse 1
+
+        lo to ssdum times l1	;  l1 fraction of ACQ_phase_factor 
+        5u
+        igrad r2d
+}
+;-----------------------end of ssdum loop----------------------
+
+        lo to movie times l3 	;  l3 = number of frames (movie loop)
+;-----------------------end of movie loop----------------------
+
+	islice
+        3u  o1list.inc  o3list.inc
+if(PVM_ppgMode1 == 0)
+{
+       3u  o2list.res
+}
+else
+{
+        3u  o2list.inc  
+}
+        d4   groff		;  groff to prevent "grad ON" for a long time
+        d6                      ;  add. delay controlled by Scan_RepetitionTime/Inv_Rep_time
+        lo to slice times NSLICES 
+;-----------------------end of slice loop--------------------
+        10u
+	lo to segm times l2	;  l2 = ACQ_size[1]/ACQ_phase_factor		
+
+
+;-----------------------------3d loop---------------------------
+if( ACQ_dim >= 3 )
+{
+	igrad r3d
+	lo to segm times l5	;  l5 = ACQ_size[2]
+}
+
+
+        lo to start times NAE   ;  NAE loop used for averaging experiments       
+
+;--- Start of cestFISP Modification by Marty Pagel ---
+; the next line increments the o4list so that the next sturation frequency
+; is used for the next image acquisition.
+
+        o4list.inc              ;  Next CEST saturation frequency, assigned to the SatFrqList near the start of the program
+
+;--- End of cestFISP Modification by Marty Pagel ---
+
+ 	lo to start times NR    ;  NR loop used for repetitions
+	zslice
+
+        3u  o1list.res
+        3u  o2list.res
+
+SETUP_GOTO(start)
+
+exit
+
+;fisp phase lists
+ph0 = 0
+ph1 = 0
+ph3 = 0 
+ph4 = 0
+ph5 = 0
+ph6 = 0
+
+
+	
+
+
+

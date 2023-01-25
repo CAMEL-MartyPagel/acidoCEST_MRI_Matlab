@@ -1,0 +1,57 @@
+###BaseLevelRelations.c:  sprintf(DPQQ[11].name,SatPulse.Filename);   /* Added by Marty Pagel */
+###BaseLevelRelations.c:    DPQQ[11].power  = SsatPulse.Attenuation;  /* Added by Marty Pagel */
+###BaseLevelRelations.c:  P[27] = SatPulse.Length * 1000;
+
+Binary file cestFISP_Pagel4.o matches
+Binary file cestFISP_Pagel4.so matches
+
+initMeth.c:  if(ParxRelsParHasValue("SatPulse") == No)                /* Added by Marty Pagel */
+initMeth.c:     STB_InitRFPulse(&SatPulse,
+initMeth.c:  SatPulseRange();                                         /* Added by Marty Pagel */
+initMeth.c:  STB_InitExcPulseEnum("SatPulseEnum");                    /* Added by Marty Pagel */
+
+Binary file initMeth.o matches
+
+###parsDefinition.h:  relations    SatPulseEnumRelation;
+###parsDefinition.h:} SatPulseEnum;
+###parsDefinition.h:  relations    SatPulseRelation;
+###parsDefinition.h:} SatPulse;
+
+####parsLayout.h:  SatPulseEnum;                                      /* Added by Marty Pagel */
+####parsLayout.h:  SatPulse;                                          /* Added by Marty Pagel */
+
+###parsRelations.c:  STB_UpdateRFPulse("SatPulse",                      /*Added by Marty Pagel */
+###parsRelations.c:                    &SatPulse,                       /*Added by Marty Pagel */
+###parsRelations.c:  STB_UpdateExcPulseEnum("SatPulseEnum",             /*Added by Marty Pagel */
+###parsRelations.c:                         &SatPulseEnum,              /*Added by Marty Pagel */
+###parsRelations.c:                         SatPulse.Filename,          /*Added by Marty Pagel */
+###parsRelations.c:                         SatPulse.Classification);   /*Added by Marty Pagel */
+###parsRelations.c:  UpdateFlipAngleArray(&SatPulse);                   /*Added by Marty Pagel */
+###parsRelations.c:   SatPulseEnumRelation
+###parsRelations.c:   Relation of SatPulseEnum (a dynamic enmueration parameter which
+###parsRelations.c:   Sets the name and the clasification  of the pulse perameter SatPulse
+###parsRelations.c:void SatPulseEnumRelation(void)                                      /* Added by Marty Pagel */
+###parsRelations.c:  DB_MSG(("-->SatPulsesEnumRelation\n"));                            /* Added by Marty Pagel */
+###parsRelations.c:  /* set the name and clasification of SatPulse: */                  /* Added by Marty Pagel */
+###parsRelations.c:  status = STB_UpdateExcPulseName("SatPulseEnum",                    /* Added by Marty Pagel */
+###parsRelations.c:                                  &SatPulseEnum,                     /* Added by Marty Pagel */
+###parsRelations.c:                                  SatPulse.Filename,                 /* Added by Marty Pagel */
+###parsRelations.c:                                  &SatPulse.Classification);         /* Added by Marty Pagel */
+###parsRelations.c:  SatPulseRange();                                                   /* Added by Marty Pagel */
+parsRelations.c:  DB_MSG(("<--SatPulseEnumRelation status = %s\n",                   	/* Added by Marty Pagel */
+###parsRelations.c:void SatPulseRelation(void)                          		/* Added by Marty Pagel */
+###parsRelations.c:  DB_MSG(("-->SatPulseRelation\n"));                 		/* Added by Marty Pagel */
+###parsRelations.c:  UT_SetRequest("SatPulse");                         		/* Added by Marty Pagel */
+###parsRelations.c:  SatPulseRange();                                   		/* Added by Marty Pagel */
+###parsRelations.c:  DB_MSG(("-->SatPulseRelation\n"));                 		/* Added by Marty Pagel */
+###parsRelations.c:void SatPulseRange(void)                     			/* Added on by Marty Pagel*/
+###parsRelations.c:  DB_MSG(("-->SatPulseRange\n"));            			/* Added on by Marty Pagel*/
+###parsRelations.c:  switch(SatPulse.Classification)            			/* Added on by Marty Pagel*/
+###parsRelations.c:    SatPulse.Classification = LIB_EXCITATION;  			/* Added on by Marty Pagel*/
+###parsRelations.c:  STB_CheckRFPulse(&SatPulse);               			/* Added on by Marty Pagel*/
+###parsRelations.c:  DB_MSG(("<--SatPulseRange\n"));            			/* Added on by Marty Pagel*/
+
+Binary file parsRelations.o matches
+relProtos_p.h:void SatPulseEnumRelation _P_((void));
+relProtos_p.h:void SatPulseRelation _P_((void));
+relProtos_p.h:void SatPulseRange _P_((void));

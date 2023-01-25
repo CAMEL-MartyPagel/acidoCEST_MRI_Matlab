@@ -1,0 +1,89 @@
+/**************************************************************/
+/*** cest_Pagel_ISA: uses SatFrqList[] for x axis and signal for y axis ***/
+/**************************************************************/
+
+/*** Before PARAMETERS () static and global variables may be declared ***/
+
+/*******************************************************/
+/********************* This line must be the first ! ***/
+PARAMETERS ( 3 )  /*** Total number of parameters: 3 ***/
+/*******************************************************/
+
+/*** After PARAMETERS () local variables may be declared ***/
+int i;
+double xmin, ymin, ymax;
+
+/*****************************************/
+/*** The following options describe    ***/
+/*** overriding the function defaults. ***/
+/*** They may appear in any order; if  ***/
+/*** they are absent defaults are used ***/
+/*****************************************/
+
+/*** Short summaries about the function and each parameter ***/
+FUNCTION ( "cest_Pagel" )                             /* Edited by Marty Pagel */
+XAXIS ( "Saturation Frequency [Hz]" )
+
+/*** Param#   description ***/
+PARDESC ( 0, "absolute bias" )
+PARDESC ( 1, "signal intensity" )
+PARDESC ( 2, "T1 relaxation time [msec]" )
+
+/*** Initials:  #   low init. high (default: -MAXFLOAT..0..MAXFLOAT) ***/
+PARINITLIMITS ( 0,     -MAXINT, 0, MAXINT )
+PARINITLIMITS ( 1, X_EPS, 1, MAXINT )
+PARINITLIMITS ( 2, X_EPS, 1, MAXINT )
+
+/*** Default values for parameter images ***/
+PARDFLT ( 0,     0 )
+PARDFLT ( 1,     0 )
+PARDFLT ( 2, X_EPS )
+
+/*** Read x-values from PARX parameter ACQ_recov_time ***/
+INITPARXREADX ( "SatFrqList" )                       /* Edited by Marty Pagel */
+
+/*** Try to predict better initial values ***/
+ymax = 0;
+ymin = MAXINT;
+for (i=0; i<NPOINTS; i++) if (YPOINT(i) > ymax && XPOINT(i) >= 0)
+  ymax = YPOINT(i);
+if (ymax > 0) PARINIT ( 1, ymax )
+ymax /= 2;
+xmin = XPOINT(0);
+for (i=0; i<NPOINTS; i++)
+  if (YPOINT(i) >= 0 && XPOINT(i) >= 0 && fabs(YPOINT(i)-ymax) < ymin)
+{
+  ymin = fabs(YPOINT(i)-ymax);
+  xmin = XPOINT(i);
+}
+if (ymin < MAXINT) PARINIT ( 2, xmin/M_LN2 )
+
+/*** Fixing parameter 0 may give better convergence ***/
+FIXED ( 0 )
+
+/********************************************************/
+/*** Body of the function (each line must be present) ***/
+/********************************************************/
+
+IMPLEMENTATION  /*** Must come before the value ***/
+
+/*** After IMPLEMENTATION local variables may be declared ***/
+double expval;
+
+expval = exp (-ARG/PAR(2));
+
+/*** Function value (must come before any derivative) ***/
+VALUE ( PAR(0)+PAR(1)*(1-expval) )
+
+/*** Derivatives on each parameter (the order is not important) ***/
+DERIVATIVE ( 0, 1 )
+DERIVATIVE ( 1, 1-expval )
+DERIVATIVE ( 2, -expval*ARG*PAR(1)/PAR(2)/PAR(2) )
+
+END
+
+/*** After END static and global functions may be declared ***/
+
+/*******************/
+/*** End of file ***/
+/*******************/

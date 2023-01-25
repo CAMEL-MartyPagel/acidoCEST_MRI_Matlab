@@ -1,0 +1,393 @@
+ INSTRUCTIONS for cestRARE_Pagel4
+
+ This RARE MRI pulse program from Bruker ParaVision 5.1 was modified by Marty Pagel
+ and colleagues (especially Ed Randtke and Kyle Jones) to create a
+CEST_RARE MRI acquisition method.  Please contact Marty at
+ mdpagel@mdanderson.org or martypagel@gmail.com for questions or sugestions.
+
+ This pulse program is provided for free to the MRI research community.
+ Although this pulse program has worked on Bruker MRI scanners
+ with ParaVision 5.1 that have been tested to date,
+ there is no guarantee that this pulse program
+ will work on all Bruker MRI scanners.
+ Also, while we are collegial researchers, we may not be able to provide
+ assistance due to limited time and other priorities.
+
+ This version was developed on July 29, 2018 and is known as the 4th version, cestRARE_Pagel4.
+Note that user-edited versions must start with a lowercase letter.  Therefore, 
+I have named our method "cestRARE" that starts with lowercase letters.
+
+Version history:
+Note that previous versions used additional names prior to 2018.
+cestRARE_Pagel4 = written July 2018 at MD Anderson, renamed variables and improved delays,
+                  and improved the respiration trigger code, based on cestFISP_Pagel4.
+
+
+Installation Instructions:
+
+You need a basic understanding of UNIX / LINUX commands to use these instructions.
+There are four general steps (Steps 1-4 below).
+
+1. Move the cestRARE_Pagel4 directory and files to /home/<your_login>/src/PV5.1 directory.  
+If you do not have a "src" sub-directory
+in your home directory, or a "PV5.1" subdirectory in your src directory, 
+then create one (mkdir ~/src; mkdir ~/src/PV5.1').
+Also, create "bin" and "bin/PV5.1" directories in your home directory (/home/<your_login>/bin/PV5.1).
+The "bin" directory containes the compiled version of your pulse program, if you edit and recompile programs.
+
+2. Copy files from the cestRARE_Pagel4 directory to the ParaVision directories.
+Note that the commands below assume that your ParaVision 5.1 version is stored in a directory
+named "/opt/PV5.1".  Some Bruker scanners store their ParaVision 5.1 version in a directory 
+named "opt/PV51".  Therefore, "cd /opt; ls" to determine which directory name your system uses.
+Then modify the commands below as needed.
+
+cp ~/src/PV5.1/cestRARE_Pagel4/cestRARE_Pagel4.so /opt/PV5.1/prog/parx/pub 
+cp ~/src/PV5.1/cestRARE_Pagel4/cestRARE_Pagel4.ppg /opt/PV5.1/exp/stan/nmr/lists/pp
+cp ~/src/PV5.1/cestRARE_Pagel4/cestRARE_Pagel4.4ch /opt/PV5.1/exp/stan/nmr/lists/pp
+cp ~/src/PV5.1/cestRARE_Pagel4/cestRARE_Pagel4_Trigger.mod /opt/PV5.1/exp/stan/nmr/lists/pp
+
+3.  Create a protocol file.
+Most Bruker MRI scanners have a directory named 
+/opt/PV5.1/exp/stan/nmr/parx/routine/S116/<your_routine_S116_directory_name>
+where <your_login> is your login name. This is the directory where your
+customized protocols are stored.  However, some Bruker MRI scanners use
+a subdirectory other than "S116" for storing protocols, such as G060.  Therefore, you need
+to check to determine if you have a directory named
+/opt/PV5.1/exp/stan/nmr/parx/routine/S116/<your_routine_S116_directory_name>
+or if there is a subdiretory with <your_routine_S116_directory_name>
+somewhere else in /opt/PV5.1/exp/stan/nmr/parx/routine/
+
+Then type the following command:
+cp ~/src/PV5.1/cestRARE_Pagel4/cestRARE_Pagel4 /opt/PV5.1/exp/stan/nmr/parx/routine/S116/<your_routine_S116_directory_name>
+
+Then edit this file in 
+/opt/PV5.1/exp/stan/nmr/parx/routine/S116/<your_routine_S116_directory_name>
+I prefer to use the UNIX/LINUX "vi editor".  But you can use other editors.  For example,
+vi /opt/PV5.1/exp/stan/nmr/parx/routine/S116/<your_routine_S116_directory_name>/cestRARE_Pagel4
+Then change "login" in this file to the target directory in the vi. Type:
+:1,$s/<your_routine_S116_directory_name>/the_name_of_your_directory/g
+Or find the three occurences of "<your_routine_S116_directory_name>" in this file and change to your sub-directory name in S116.
+Then type escape, and type :wq
+
+4.  Create files for Image Sequence Analysis
+You can view your CEST spectrum in the Image Sequence Analysis tool, in the Image Display & Preocessing menu, Processing Submenu.
+Check that you have the following two "isa" directories:
+/opt/PV5.1/prog/curdir/<your_login>/ParaVision/isa/src
+/opt/PV5.1/prog/curdir/<your_login>/ParaVision/isa/obj
+then
+cp ~/src/PV5.1/cestRARE_Pagel4/cest_Pagel_ISA /opt/PV5.1/prog/curdir/<your_login>/ParaVision/isa/src/
+cp ~/src/PV5.1/cestRARE_Pagel4/cest_Pagel_ISA.so /opt/PV5.1/prog/curdir/<your_login>/ParaVision/isa/obj/
+
+Note that cest_Pagel4_ISA files are the same for all cestXXXX_Pagel4 pulse rograms.  Therefore, if you
+have installed cest_Pagel4_ISA files for another cestXXXX_Pagel4 pulse program, then you have already installed these cest_Pagel4_ISA files.
+
+
+5.  Restart ParaVision
+If ParaVision is running, stop ParaVision.
+Then start ParaVision.
+Start a New Patient, New Study, and New Scan.  You should be able to select 
+"cestRARE_Pagel4" as your new scan protocol.
+
+
+
+cestRARE_Pagel4 Parameters:
+Edit Method to see all of the parameters.
+
+Measuring Method = cestRARE_Pagel4
+
+Presaturation Delay = 0.01 ms
+        This delay is set to 10 microseconds by default, and therefore is negligible.
+        The Presaturation Delay occurs before the loop of saturation pulses.
+        For example, if a series of saturation periods of different lengths needs to be tested,
+        but the total time of each experiment should be held constant (to maintain a consistent relaxation weighting
+        for all scans), then the Presat Delay can be decremented as the saturation period is incremented.  In the example below,
+        the .Length of the saturation pulse is 500 ms.
+        Presat Delay = 0 ms, Number of Saturation Pulses = 6, and therefore total time = 3 sec
+        Presat Delay = 500 msc, Number of Saturation Pulses = 5, and therefore total time = 3 sec
+        Presat Delay = 1000 msc, Number of Saturation Pulses = 4, and therefore total time = 3 sec
+        Presat Delay = 1500 msc, Number of Saturation Pulses = 3, and therefore total time = 3 sec
+        Presat Delay = 2000 msc, Number of Saturation Pulses = 2, and therefore total time = 3 sec
+        Presat Delay = 2500 msc, Number of Saturation Pulses = 1, and therefore total time = 3 sec
+
+Number of Sat Pulses = 10
+        NOTE: The total length of the saturation period is the .Length of a saturation puulse listed above,
+        multiplied by the number of saturation pulses (See the "Number of Cest Pulses" parameter below).
+        For example, a 600 msec .Length and Number of Cest Pulses = 10 is a 6 second saturation pulse.
+
+        CAUTION: If respiration gating is used (Preparation Trigger is turned ON), then the
+        pulse sequence will perform one ADDITONAL satturation pulse and then check the trigger.
+        Therefore, set the number of saturation pulses to one less than the number that you actually want.
+        For example, if you want to perform 10 saturation pulses at 600 msec for a total of 6 sec,
+        And you want to use respiration gating, then set the number of pulses to 9, and 10
+        pulses will actually be peformed.
+        Note also that an 11th, 12th, etc. pulse may also be performed depending on the breathing
+        of the mouse (see below for details).
+        The Number of Sat Pulses must be at least 1.  Therefore, the pulse program will perform at 
+        least 2 saturation pulses for the saturation period of a respiration-gated acquisition.
+
+Sat Power = 4 uT
+	You can enter the saturation power in microTesla.
+	The Saturation Power and the Saturation Pulse Length determine 
+	the flip angle of the saturation pulse:
+        Z degrees of the flip angle = (X saturation power in microTesla)(42.58 Hz/microTesla)((1 cycle/sec)/Hz)
+		(360 degrees/cycle)(Y .Length of 1 pulsa in sec)
+        Or Z = (X)(Y)(15,328.8) 
+
+        For example, 36,789.1 degrees = (4 uT)(0.6 sec)(15,328.8) 
+	Note that if you change the Sat Power OR the asaturation pulse length, 
+	then the Saturation flip angle will be recalculated.
+
+Sat Pulse Shape = bp32
+	bp32 is a block pulse.  Other pulse shapes can be selected.  Pulse shapes
+	are stored in /opt/PV5.1/exp/stan/nmr/lists/wave/ . You can add other shaped
+	pulses to this directory as needed.
+
+Sat Pulse - expand this sub-menu
+	.Length = the length of one saturation pulse
+	.FlipAngle = the flip angle in degrees
+	.Attenuation = the attenuation value that sets the saturation power
+	The attenuation is determined from the flip angle and the calibration of the
+	90 degree pulse when you first click Traffic-Light.
+ 	All of the other parameters in this sub-menu can be ignored.
+
+The "range" parameters establish the saturation frequency list.  
+You can acquire ranges of the CEST spectrum with different intervals.  
+For example, you can set three ranges, where
+the first range spans -12 to -3 ppm in 1 ppm increments, 
+the second range spans -2.9 to +2.9 ppm in 0.1 ppm increments,
+the third range spans +3 to +12 ppm in 0.25 ppm increments,
+The following parameters show how to set up this example:
+number of ranges = 3 (note that the remaining parmaters now have 3 boxes)
+Begin Sat Freq range         = -12   -2.9    3
+End Sat Freq range           =  -3    2.9   12
+Set Freq Interval            =   1    0.1    0.25
+number of Sat Freqs in range =  10    59    37
+
+Note that the number of Sat Frequencies in each range is calculated from the other parameters.
+Do not enter numbers for the "number of Sat Freqs in range" because they will be recalculated.
+Instead, change the interval to change the number of sat frequencies in a range.
+Also, the interval CANNOT be zero.  When you increase the number of ranges, the interval is zero by default.
+You must change this zero to a positive number.  
+
+Total Number of Sat Frequencies = the sum of "number of Sat Freqs in range" listed above (106 in this example)
+	Again, this parameter is not set by the user.
+
+SatFrqArray = not set by the user.  However, review the list to ensure that the saturation frequency list is correct.
+	Divide the number of a saturation frequency in Hz by the magnetic field strength 
+	(i.e., 300 MHz for a 7T magnet).
+	Note that the exact Larmor Frequency of your magnet is used to set these 
+	saturation frequencies, and the Larmor
+	frequency is often not exactly 300.000000 Mz.
+
+Echo Time = the TE time, usually set as short as possible.  However, TE cannot be set in cestRARE_Pagel4.
+	Insted, set the effective echo time to be as short as possible.  
+
+Effective Echo Time = Echo time of the RARE, set this variable to be as short as possible.
+
+Rare Factor = number of k-space lines to acquire after each excitation.
+
+Repetition Time = This is the TR for the RARE acquistion, and should also be set as short as possible.
+
+Number of Averages = 1.  Values other than 1 will cause the pulse program to 
+	repeat the saturation frequency and sum the acquisition with the previous acquistion.
+
+Number of Repetitions = Not Used (automatically set to the total number of saturation frequencies).  
+	Note that we have used the "repetition loop" 
+	in the Bruker pulse sequence to iterate the saturation frequency.   
+	Unlike cestFISP_Pagel4, cestRARE_Pagel4 CANNOT acquire a series of CEST spectra in one dataset.
+	Acquiring multiple spectra can be helpful for acquiring kinetics data, where a series of CEST spectra 
+	are continually acquired.  However, in cestRARE_Pagel4, I ahve hardwaired NR and PVM_NRepetitions to be the 
+	same value as NumSatFrqTotal. Tehrefore, NR cannot be changed.  If you want to use cestRARE_PAgel4 to acquire
+	multiple CEST spectra, then edit parsRelations.c, remove the following line:
+	PVM_NREpetitions = NumSatFrqTotal;
+	and then recompile (make clean; make all; and reinstall files as described above).  
+	Then set Number of Repetitions to a multiple of NumSatFrqTotal.
+
+Number of Echo images = 1
+
+Estimated Total Scan Time = calculated INCORRECTLY.  
+	However, the Scan Control menu shows the correct total scan time and time remaining.
+
+Derive Pulse Gains = Yes
+
+Encoding - expand this sub-menu
+	Phase Encoding Order = CENTRIC_ENC
+		Use Centric Encoding so that the initial signal acquisition establishes 
+		the signal level for the image.  The alternative is to use Linear Encoding.  
+		However, some CEST contrast is lost between the time that the
+		acuqision is started at the edge of k-space, and the time that signal is 
+		acquired in the center of k-space.  During this time, T1 relaxation occurs 
+		which reduces CEST contrast (T1 relaxation is the enemy of CEST).
+		Therefore, use Centric Encoding.  See "Dummy Echos" below for more details.
+
+Preparation Options - Expand this sub-menu
+	Dummy Sans = 2
+		Setting Dummy Echos allows the magnetization to reach steady state 
+		before data is actually acquired.  
+		We use 8 dummy echos which seems sufficient for most samples.
+		The Dummy Echos compensates for using Centric Encoding (described above).
+
+Trigger Module= Set to OFF for no respiration gating.
+	 	Set to ON for respiration gating
+		If you select respriation gating, then the pulse sequence will perform the saturation period
+		(10 pulses each for a 600 msec duration, for a 6 sec saturation period).  
+		Then the pulse sequence will perform ONE ADDITIONAL saturation pulse
+		and then check to determine if the trigger is active.  
+		If the trigger is active, the pulse sequence will perform the RARE acquisition.
+		If the trigger is not active, then the pulse sequence will perform 1 additional 
+		saturation pulse (600 msec in this example),
+		and then check if the trigger is active.  This loop continues until an active trigger 
+		is detected after a saturation pulse.
+		For this example, the total saturation perid is then 
+		6.6, 7.2, 7.8, 8.4, etc., seconds.  We use 6.6 seconds for our minimum
+		saturation period which is very close to 100% steady state, so that additional 
+		saturation does not change the CEST signal.
+		Use a Trigger Mode of "per_PlaseStep" and a Trigger Delay of 1.000 ms.  
+		We use a SA Instruments respiration gating system,
+		with "pulse invert" checked on, "Begin Delay" set to 200, 
+		"Max Width" set to 400, and "Gates" checked on.
+		
+		IMPORTANT NOTE: Some Bruker scanners use "trignl1" and other Bruker scanners use "trigpl1".
+		trignl1 appears to look for a negative change in voltage, while trigpl1 looks for a positive
+		change in voltage, when the trigger is evaluated. This version sues "trignl1".  I am testing other
+		versions. - Marty Pagel, July 29, 2018 
+
+
+
+How to use cestRARE_Pagel4:
+1.  Acquire a high resolution MR image of your mouse or sample.  Multislice is OK for this image set.
+2.  Select the single image slice that you want to image with CEST MRI.  
+    cestRARE_Pagel4 only acuqires single-slice data. Make a note of the isodist parameter for this slice 
+    (i.e., slice position in millimeters).
+3.  Select New Scan and select cestRARE_Pagel4
+4.  Use the Geometry Editor to Import Geometry from the high-resolution MR image acquired in step 1 above.
+5.  Set the number of slices to 1 and set the isodist to the value for the single slice that you 
+    want to acuqire (step 2 above).
+6.  Select your CEST parameters (See the notes above).
+7.  Ensure that your mouse or sample are at 37.0C plus or minus 0.2C 
+    (plus or minus 0.5C may also be acceptable, but we set our tolerance to pulse or minus 0.2C).
+8.  Ensure that your mouse is breathing consistently and slowly.  Note that you need a 
+    ~450 msec window with no lung motion for best results.
+    A breathing rate < 45 breaths per minute provides 1.33 seconds between breaths.  
+    The mouse "gasps" for about 300 msec under anesthetic.  
+    So you then have a ~1 second window to acquire your ~450 msec RARE acquisition. i
+    Faster breathign rates may not allow enough time for RARE acquisition between breaths.
+9.  Click the Traffic Light Icon. You are now acquiring cestRARE_Pagel4 data.
+
+CAUTION: A RARE acquisition can take a long time if you use a small RARE factor and/or set a large matrix.  
+For example, a RARE factor of 4 and a matrix of 64 needs 8 excitations to acquire the 64 k-space lines.
+Also, cestRARE_Pagel4 places a saturation period between each excitation.  For example a 6-second saturation with 8 excitations
+will require 48 seconds just to acquire one image.  For this reason, it is recommended that a large RARE 
+factor and a small matrix be used.  For example, a RARE factor of 64 and a matrix of 64 is a "single-shot" experiment
+that is much faster.  Also, if there is motion between the excitations of a RARE that has a factor < matrix size,
+then this motion can cause artifacts in the image.  For this reason, I personally prefer cestFISP_Page4 rathe than
+cestRARE.
+
+How to display a CEST Spectrum using Image Sequence Analysis.
+You can view your CEST spectrum in the Image Sequence Analysis tool, in the Image Display & Preocessing menu, Processing Submenu.
+In the Image Sequence Analysis tool,
+click File / More Buttons
+A new row of buttons appears at teh bottom of the ISA window.  Click on Define ROI... on that bottom row.
+Define your ROI using the new ROI tool window that apepars.
+In the ISA window, click on Function / Select ISA Function
+Select the cest_Pagel_ISA function
+Click on Calc. Points for ROI.  A vertical line of dots will appear on the graph.
+Click on Initialize ISA.  The CEST spectrum will appear.  Note that the positive
+saturation frequencies appear on the right, while CEST spectra shold be plotted with
+positive saturation frequencies on the left.  Also, this procedure only displays
+a CEST spectrum to view the quality of your data.  This tool does NOT analyze CEST spectra.
+
+
+
+Parameters specific to the CEST saturation period:
+PresatDelay = Delay before the saturation period
+
+NumSatPulses =  Number of Saturation Pulses in the Saturation Period.
+                All saturation pulses use the same pulse shape.  A 10 microsecond delay
+                is placed between pulses.
+SatPower = Saturation power
+SatPulseShape = Saturation Pulse Shape
+SatPulse.Length = length of a single saturation pulse in milliseconds
+SatPulse.Flipangle = the flip angle of teh saturation pulse in degrees
+
+Sat_range_number = number of saturation frequency ranges
+Sat_range_start = start frequency of the saturation frequency range
+Sat_range_end = end frequency of the saturation frquency range
+Sat_range_interval = interval between saturation frquencies in the sat freuqnecy range
+Sat_range_NumSatFrq = Number of saturation frequencies in the range
+
+NumSatFrqTotal = Total number of saturation frequencies
+SatFrqList = The list of the saturation frequencies, in units of Hz.
+
+
+
+Advanced Notes about the pulse sequence timing:
+The standard RARE has the following start to the pulse sequence:
+FQ1 - D4 - FQ8 - 10u - 5 u - 10u - FQ=o1list - D10 - alpha2 - 10u PO:sp3 - 10u - D4 - ...
+To see this pulse sequence, see Spectrometer Control Tool / Tools / Pulse Program Tool...
+
+The cestRARE pulse sequence with NO respiration gating
+has the following modification after the second 10u and before the FQ=o1list
+GATEP - D7 - FQ=o4list - 10u - {mtc - 10u - P27} 
+where a loop is dentoed with {} brackets.
+
+This additional sequence is listed in cestRARE_Pagel4_Trigger.mod
+The ppg and 4ch files simply defer to this Trigger.mod file.
+
+After the GATEP command, the Ds75 delay (also known as D[7]) is applied, which is the Presat Delay.  
+The pulse frequency is set to the value in the o4list, which takes 10u.
+"mtc" is the start of the loop for the saturation pulse.
+Then after another 10 usec delay, the P27 pulse is performed.  This is the saturation pulse.
+Then the sequence loops to MTC until the number of CEST pulses is reached.
+Then RARE acquisition begins.
+
+The cestRARE pulse sequence WITH respiration gating
+has the following modification after the second 10u and before the FQ=o1list
+GATEP - D7 - FQ=o4list - 10u -  {mtc - 10u - P27} - 5u - {startgate - 5u - P27 - 30u - check_trigger} - endgate - MORE
+where MORE at the end is:
+for a Avance III system, 5u delay to set trignl1, adn 5 u delay to set GRADSYNC
+for all other systems, 5u delay to set trigpl1
+
+The first part of this pulse sequence is the same as the sequence with no respiration gating.
+then after another 5 usec delay, another loop is performed, named "startgate".  
+This is an additional saturation pulse beyond the number of pulses requested in the menu.
+See the "CAUTION" message above about the Number of CEST Pulses.
+Then the trigger is checked during a 30u delay.  This 30u is teh shortest delay when checking a trigger.
+If the trigger is active, then there 1 or 2 additional delays (depending on the version of Avance hardware, 
+and finally RARE acquisition begins.
+If the trigger is NOT active, then the loop continues {5u - P27 - 30u}.
+Note that this is an endless loop until the trigger is active.
+
+
+
+Files that need to be edited:
+Note that all edits in these files are annotated (except the parameter file cestRARE_Pagel4).
+Search for "Pagel" in a file and you will find these annotations.
+BaseLevelRelations.c
+cestRARE_Pagel4 (this is the parameter file for a protocol.  Edits are within the first 30 lines)
+cestRARE_Pagel4.4ch
+cestRARE_Pagel4.c (only 1 line needs to be edited)
+cestRARE_Pagel4_INSTRUCTIONS (this file)
+cestRARE_Pagel4.ppg
+cestRARE_Pagel4_Trigger.mod
+initMeth.c
+itenerary.txt
+Makefile (directory paths have to be edited)
+parsDefinition.h (at the end of the file)
+parsLayout.h (near the end of the file)
+parsRelations.c
+
+
+Files that do NOT need to be edited but must be present:
+callbackDefs.h
+deriveVisu.c
+gradTools.c
+loadMeth.c
+method.h
+parsTypes.h
+RecoRelations.c
+relProtos.h
+relProtos_p.h
+
+File for ISA function:
+cest_Pagel_ISA (uses SatFrqList variable, and requires a line with cestRARE_Pagel_ISA as the function name).
