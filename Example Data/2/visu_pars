@@ -1,0 +1,172 @@
+##TITLE=Parameter List, ParaVision 6.0.1
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=PagelLab
+$$ 2022-03-16 11:59:53.088 -0500  PagelLab@CZC4170WSK
+$$ /opt/PV6.0.1/data/PagelLab/chin_1_88_20220316_115135/2/visu_pars
+$$ process /opt/PV6.0.1/prog/mod/acq_out
+##$VisuVersion=3
+##$VisuUid=( 65 )
+<2.16.756.5.5.100.8323328.17734.1647449993.1>
+##$VisuCreator=( 65 )
+<ParaVision>
+##$VisuCreatorVersion=( 65 )
+<6.0.1>
+##$VisuCreationDate=<2022-03-16T11:59:53,053-0500>
+##$VisuInstanceModality=( 65 )
+<MR>
+##$VisuCoreFrameCount=24
+##$VisuCoreDim=2
+##$VisuCoreSize=( 2 )
+128 128
+##$VisuCoreDimDesc=( 2 )
+spatial spatial
+##$VisuCoreExtent=( 2 )
+38.4 38.4
+##$VisuCoreFrameThickness=( 1 )
+1
+##$VisuCoreUnits=( 2, 65 )
+<mm> <mm>
+##$VisuCoreOrientation=( 24, 9 )
+1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 
+0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 
+0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 
+1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 
+0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 
+0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1
+##$VisuCorePosition=( 24, 3 )
+-18.14261 -19.2 -8.08494 -18.14261 -19.2 -7.08494 -18.14261 -19.2 -6.08494 
+-18.14261 -19.2 -5.08494 -18.14261 -19.2 -4.08494 -18.14261 -19.2 -3.08494 
+-18.14261 -19.2 -2.08494 -18.14261 -19.2 -1.08494 -18.14261 -19.2 -0.08494 
+-18.14261 -19.2 0.91506 -18.14261 -19.2 1.91506 -18.14261 -19.2 2.91506 
+-18.14261 -19.2 3.91506 -18.14261 -19.2 4.91506 -18.14261 -19.2 5.91506 
+-18.14261 -19.2 6.91506 -18.14261 -19.2 7.91506 -18.14261 -19.2 8.91506 
+-18.14261 -19.2 9.91506 -18.14261 -19.2 10.91506 -18.14261 -19.2 11.91506 
+-18.14261 -19.2 12.91506 -18.14261 -19.2 13.91506 -18.14261 -19.2 14.91506
+##$VisuCoreDataMin=( 24 )
+0.868398049376231 1.48566601904121 0.646157942845946 0.421259848511605 
+0.3107742879413 1.88046378324852 0.921436878438144 1.25626497174659 
+0.995489521375401 1.19692714250692 1.48346779787909 0.877769943985413 
+0.587364929305537 0.213262834861067 0.802989184846095 1.40328384642579 
+1.76203387904268 0.711650421137935 0.95651919671173 0.46830665731381 
+1.31708770695046 0.48773960661931 1.05759124734305 1.9808705236134
+##$VisuCoreDataMax=( 24 )
+25232.0419362613 23295.384728396 26048.861166325 25886.7192671305 
+27279.5371472955 28643.9329978477 28853.6777013738 29746.271567037 32766.5 
+30081.8765618871 30586.768507557 28005.2809737968 28061.6374329025 
+25734.6395600634 29817.0940176009 30559.1060490946 29583.9796261794 
+27196.8949918223 25568.0043355922 26065.854310979 25633.738750008 
+23494.4998419444 21779.9227955656 20569.5814583155
+##$VisuCoreDataOffs=( 24 )
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+##$VisuCoreDataSlope=( 24 )
+0.0393615990448183 0.0393615990448183 0.0393615990448183 0.0393615990448183 
+0.0393615990448183 0.0393615990448183 0.0393615990448183 0.0393615990448183 
+0.0393615990448183 0.0393615990448183 0.0393615990448183 0.0393615990448183 
+0.0393615990448183 0.0393615990448183 0.0393615990448183 0.0393615990448183 
+0.0393615990448183 0.0393615990448183 0.0393615990448183 0.0393615990448183 
+0.0393615990448183 0.0393615990448183 0.0393615990448183 0.0393615990448183
+##$VisuCoreFrameType=( 1 )
+MAGNITUDE_IMAGE
+##$VisuCoreSlicePacksDef=(0, 1)
+##$VisuCoreSlicePacksSlices=( 1 )
+(0, 24)
+##$VisuCoreSlicePacksSliceDist=( 1 )
+1
+##$VisuCoreWordType=_16BIT_SGN_INT
+##$VisuCoreByteOrder=littleEndian
+##$VisuFGOrderDescDim=1
+##$VisuFGOrderDesc=( 1 )
+(24, <FG_SLICE>, <>, 0, 2)
+##$VisuGroupDepVals=( 2 )
+(<VisuCoreOrientation>, 0) (<VisuCorePosition>, 0)
+##$VisuSubjectName=( 65 )
+<Renee Chin>
+##$VisuSubjectId=( 65 )
+<chin>
+##$VisuSubjectUid=( 65 )
+<2.16.756.5.5.100.8323328.19798.1629746466.3>
+##$VisuSubjectInstanceCreationDate=(1629746466, 652, -300)
+##$VisuSubjectBirthDate=( 9 )
+<20210823>
+##$VisuSubjectSex=UNKNOWN
+##$VisuSubjectType=OtherAnimal
+##$VisuStudyUid=( 65 )
+<2.16.756.5.5.100.8323328.1110.1647449495.545>
+##$VisuStudyDate=<2022-03-16T11:51:35,534-0500>
+##$VisuStudyId=( 65 )
+<20220316_B16F10Eso_M1>
+##$VisuStudyNumber=88
+##$VisuSubjectWeight=0.001
+##$VisuStudyReferringPhysician=( 65 )
+<PagelLab>
+##$VisuStudyDescription=( 2048 )
+<\
+>
+##$VisuExperimentNumber=2
+##$VisuProcessingNumber=1
+##$VisuSeriesDate=<2022-03-16T11:59:53,053-0500>
+##$VisuSubjectPosition=Head_Prone
+##$VisuSeriesTypeId=( 65 )
+<ACQ_BRUKER_PVM>
+##$VisuSeriesComment=( 65 )
+<RARE_24slices>
+##$VisuManufacturer=( 65 )
+<Bruker BioSpin MRI GmbH>
+##$VisuAcqSoftwareVersion=( 65 )
+<6.0.1>
+##$VisuInstitution=( 65 )
+<MD Anderson>
+##$VisuStation=( 65 )
+<spect>
+##$VisuSystemOrderNumber=( 65 )
+<10102460>
+##$VisuAcqDate=<2022-03-16T11:58:28,434-0500>
+##$VisuAcqEchoTrainLength=12
+##$VisuAcqSequenceName=( 40 )
+<Bruker:RARE>
+##$VisuAcqNumberOfAverages=4
+##$VisuAcqImagingFrequency=300.319057478109
+##$VisuAcqImagedNucleus=( 8 )
+<1H>
+##$VisuAcqRepetitionTime=( 1 )
+2000
+##$VisuAcqPhaseEncSteps=120
+##$VisuAcqPixelBandwidth=390.625
+##$VisuAcqFlipAngle=90
+##$VisuAcqSize=( 2 )
+128 120
+##$VisuAcqImageSizeAccellerated=Yes
+##$VisuAcqGradEncoding=( 2 )
+read_enc phase_enc
+##$VisuAcqEchoTime=( 1 )
+32.52
+##$VisuAcquisitionProtocol=( 65 )
+<RARE_final_hisres_20200731>
+##$VisuAcqScanTime=80000
+##$VisuAcqAntiAlias=( 2 )
+1 1
+##$VisuAcqEchoSequenceType=Both
+##$VisuAcqSpinsVelocityEncoded=No
+##$VisuAcqHasTimeOfFlightContrast=No
+##$VisuAcqIsEpiSequence=No
+##$VisuAcqSpectralSuppression=NoSuppression
+##$VisuAcqKSpaceTraversal=RectilinearTraversal
+##$VisuAcqEncodingOrder=( 2 )
+LinearEncoding LinearEncoding
+##$VisuAcqKSpaceTrajectoryCnt=1
+##$VisuAcqKSpaceFiltering=( 2 )
+NO_WDW NO_WDW
+##$VisuAcqFlowCompensation=FlowNone
+##$VisuAcqSpoiling=GradientSpoiled
+##$VisuAcqPartialFourier=( 2 )
+1 1
+##$VisuAcqParallelReductionFactor=( 2 )
+1 1
+##$VisuAcqMagnetizationTransfer=No
+##$VisuAcqBloodSignalNulling=No
+##$VisuCardiacSynchUsed=No
+##$VisuRespSynchUsed=No
+##END=
+$$ File finished by PARX at 2022-03-16 11:59:53.089 -0500

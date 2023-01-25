@@ -1,0 +1,26 @@
+##TITLE=Parameter List, ParaVision 6.0.1
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=PagelLab
+$$ 2022-03-16 12:00:47.949 -0500  PagelLab@CZC4170WSK
+$$ /opt/PV6.0.1/data/PagelLab/chin_1_88_20220316_115135/3/AdjStatePerScan
+$$ process /opt/PV6.0.1/prog/mod/pipe
+##$AdjScanStateCompleted=Yes
+##$AdjScanStateAdjName=( 2, 128 )
+<SHIM_Scan> <RCVR_Standard>
+##$AdjScanStateCategory=( 2 )
+SHIM RCVR
+##$AdjScanStateTime=( 2 )
+<2022-03-16T12:00:28,975-0500> <2022-03-16T12:00:29,098-0500>
+##$AdjScanStateExpno=( 2 )
+3 3
+##$AdjScanStateState=( 2 )
+adj_successful adj_successful
+##$AdjScanStateResultId=( 2, 65 )
+<2.16.756.5.5.100.8323328.18957.1647450028.10> 
+<2.16.756.5.5.100.8323328.18957.1647450028.11>
+##$AdjScanStateMethod=( 2, 128 )
+<Bruker:AdjShim> <Bruker:RARE>
+##END=
+$$ File finished by PARX at 2022-03-16 12:00:47.949 -0500

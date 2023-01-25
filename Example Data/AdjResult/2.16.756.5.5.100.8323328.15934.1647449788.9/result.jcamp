@@ -1,0 +1,11 @@
+##TITLE=Parameter List, ParaVision 6.0.1
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=PagelLab
+$$ 2022-03-16 11:57:37.445 -0500  PagelLab@CZC4170WSK
+$$ /opt/PV6.0.1/data/PagelLab/chin_1_88_20220316_115135/AdjResult/2.16.756.5.5.100.8323328.15934.1647449788.9/result.jcamp
+$$ process /opt/PV6.0.1/prog/mod/pipe
+##$PVM_StudyRefPow=(0.0966367471941666, <Adj by AdjRefG (protocol ADJ_REFG)>)
+##END=
+$$ File finished by PARX at 2022-03-16 11:57:37.465 -0500
