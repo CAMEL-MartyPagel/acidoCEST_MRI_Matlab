@@ -20,7 +20,7 @@
 % (type 'path' in the Command Window). 
 
 % TLi made edits in March 2022 so that
-% (1) the Bloch fitting produces more accurate fitting result (by optimizing base catmeanalyzing parameters)
+% (1) the Bloch fitting produces more accurate fitting result (by optimizing base catalyzing parameters)
 % (2) further clean up the code to remove unnecessary portion
 
 %% Clear Workspace and define pathnames
@@ -71,7 +71,7 @@ for current_mouse_number=1:number_of_mice
     ref_image=images_postinjection(:,:,num_dummy);
     SatFrqList(1:num_dummy)=[];
     SatFrqList_ppm(1:num_dummy)=[];
-    images_preinjection(:,:,1:num_dummy)=[];
+    images_preinjection(:,:,1:num_dummy)=[];threshold
     images_postinjection(:,:,1:num_dummy)=[];
 
     % we apply a Gaussian spatial smoothing to improve SNR.
@@ -296,9 +296,9 @@ for aaa=1:size(preinjection_images,1)
         elseif pH_results(aaa,bbb)>7.6
             pH_results(aaa,bbb)=0;
             kex_results_Hz(aaa,bbb,:)=0;
-        elseif max(contrast_isovue_pixel(aaa,bbb,:))<threshold
-            pH_results(aaa,bbb)=0;
-            kex_results_Hz(aaa,bbb,:)=0;
+%         elseif max(contrast_isovue_pixel(aaa,bbb,:))<threshold
+%             pH_results(aaa,bbb)=0;
+%             kex_results_Hz(aaa,bbb,:)=0;
         end
     end
 end
@@ -308,3 +308,45 @@ save pH_results_BeforeThreshold pH_results_BeforeThreshold
 save kex_results_Hz_BeforeThreshold kex_results_Hz_BeforeThreshold
 save pH_results pH_results;
 save kex_results_Hz kex_results_Hz;
+figure; imagesc(pH_results); title("pH results"); clim([6 7.5]);
+figure; imagesc(pH_results_BeforeThreshold); title("pH results BeforeThreshold"); clim([6 7.5]);
+average_pH_results = mean(nonzeros(pH_results));
+average_pH_results_BeforeThreshold = mean(nonzeros(pH_results_BeforeThreshold));
+disp('Average pH = '); disp(average_pH_results);
+disp('Average pH Before Threshold = '); disp(average_pH_results_BeforeThreshold);
+disp('Number of pixels = '); disp(ddd);
+
+figure;
+    ax1 = axes;
+    imagesc(anatomical_image)
+    axis image off;     
+    colormap(ax1, 'gray');
+    ax2 = axes;
+    imagesc(ax2, pH_results_BeforeThreshold, 'alphadata', pH_results_BeforeThreshold);
+    axis image off; 
+    colormap(ax2,'jet');
+    clim(ax2, [6 7.5]);
+    ax2.Visible = 'off';
+    linkprop([ax1 ax2],'Position');
+    title('pH results BeforeThreshold');
+    colorbar;
+    savefig('pH_results_BeforeThreshold.fig');
+    print(gcf, '-dtiff', 'pH_results_BeforeThreshold.tiff');
+
+figure;
+    ax1 = axes;
+    imagesc(anatomical_image)
+    axis image off; 
+    colormap(ax1, 'gray');
+    ax2 = axes;
+    imagesc(ax2, pH_results, 'alphadata', pH_results);
+    axis image off; 
+    colormap(ax2,'jet');
+    clim(ax2, [6 7.5]);
+    ax2.Visible = 'off';
+    linkprop([ax1 ax2],'Position');
+    title('pH results');
+    colorbar;
+    savefig('pH_results.fig');
+    print(gcf, '-dtiff', 'pH_results.tiff');
+
