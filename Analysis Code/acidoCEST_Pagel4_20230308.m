@@ -150,29 +150,29 @@ for current_mouse_number=1:number_of_mice
     mask_tumor=mask_tumor_resize;
     mask_noise=mask_noise_resize;
 
-    image=squeeze(postinjection_images(:,:,:,current_mouse_number));
-    noise_vector=[];
-    for aaa=1:size(image,1)
-        for bbb=1:size(image,2)
-            if mask_noise(aaa,bbb)==1
-                noise_vector(end+1)=ref_image_gauss(aaa,bbb);
-            end
-        end
-    end
-    std_noise=std(noise_vector);
-    
-    signal_vector=[];
-    for aaa=1:size(image,1)
-        for bbb=1:size(image,2)
-            if mask_tumor(aaa,bbb)==1
-                signal_vector(end+1)=ref_image_gauss(aaa,bbb);
-            end
-        end
-    end
-    mean_signal=mean(signal_vector);
-    
-    % I need to verify this threshold calculation - Marty Pagel.
-    threshold=((std_noise)*2*sqrt(2))./mean_signal;
+%     image=squeeze(postinjection_images(:,:,:,current_mouse_number));
+%     noise_vector=[];
+%     for aaa=1:size(image,1)
+%         for bbb=1:size(image,2)
+%             if mask_noise(aaa,bbb)==1
+%                 noise_vector(end+1)=ref_image_gauss(aaa,bbb);
+%             end
+%         end
+%     end
+%     std_noise=std(noise_vector);
+%     
+%     signal_vector=[];
+%     for aaa=1:size(image,1)
+%         for bbb=1:size(image,2)
+%             if mask_tumor(aaa,bbb)==1
+%                 signal_vector(end+1)=ref_image_gauss(aaa,bbb);
+%             end
+%         end
+%     end
+%     mean_signal=mean(signal_vector);
+%     
+%     % I need to verify this threshold calculation - Marty Pagel.
+%     threshold=((std_noise)*2*sqrt(2))./mean_signal;
 end
 
 %% User needs to load in experimental information (experimental T1, T2, B1 and B0) if implementation of experimental data into fitting is desired.
