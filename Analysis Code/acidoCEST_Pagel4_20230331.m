@@ -71,7 +71,7 @@ for current_mouse_number=1:number_of_mice
     ref_image=images_postinjection(:,:,num_dummy);
     SatFrqList(1:num_dummy)=[];
     SatFrqList_ppm(1:num_dummy)=[];
-    images_preinjection(:,:,1:num_dummy)=[];threshold
+    images_preinjection(:,:,1:num_dummy)=[];
     images_postinjection(:,:,1:num_dummy)=[];
 
     % we apply a Gaussian spatial smoothing to improve SNR.
